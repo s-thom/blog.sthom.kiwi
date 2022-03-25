@@ -18,7 +18,7 @@ export interface PageProps {
 }
 
 export interface Params extends ParsedUrlQuery {
-  pageId: string
+  pageId: string[]
 }
 
 export interface Site {
@@ -43,10 +43,15 @@ export interface SiteMap {
   site: Site
   pageMap: PageMap
   canonicalPageMap: CanonicalPageMap
+  fullUrlMap: FullUrlMap
 }
 
 export interface CanonicalPageMap {
   [canonicalPageId: string]: string
+}
+
+export interface FullUrlMap {
+  [pageId: string]: string
 }
 
 export interface PageUrlOverridesMap {
@@ -64,9 +69,10 @@ export interface PageUrlOverridesInverseMap {
 export interface NotionPageInfo {
   pageId: string
   title: string
-  image: string
-  imageObjectPosition: string
-  author: string
-  authorImage: string
-  detail: string
+  image: string | null
+  imageObjectPosition: string | null
+  icon: string | null
+  author: string | null
+  authorImage: string | null
+  detail: string | null
 }

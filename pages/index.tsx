@@ -3,6 +3,7 @@ import * as React from 'react'
 import { NotionPage } from '@/components/NotionPage'
 import { domain } from '@/lib/config'
 import { resolveNotionPage } from '@/lib/resolve-notion-page'
+import { getPageComponents } from '@/lib/s-thom/getPageComponents'
 
 export const getStaticProps = async () => {
   try {
@@ -19,5 +20,9 @@ export const getStaticProps = async () => {
 }
 
 export default function NotionDomainPage(props) {
-  return <NotionPage {...props} />
+  return <NotionPage {...props} components={getPageComponents(props.pageId)} />
+}
+
+export const config = {
+  unstable_runtimeJS: false
 }

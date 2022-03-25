@@ -1,0 +1,16 @@
+.wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 1em;
+}
+
+.content {
+  min-width: 100%;
+  width: max-content;
+}
+
+.content :global .shiki {
+  padding: 1em;
+  tab-size: 2;
+}

@@ -6,12 +6,14 @@ import { ImageResponse } from '@vercel/og'
 import { api, apiHost, rootNotionPageId } from '@/lib/config'
 import { NotionPageInfo } from '@/lib/types'
 
-const interRegularFontP = fetch(
-  new URL('../../public/fonts/Inter-Regular.ttf', import.meta.url)
+const interPromise = fetch(
+  new URL(
+    '@fontsource/inter/files/inter-latin-400-normal.woff',
+    import.meta.url
+  )
 ).then((res) => res.arrayBuffer())
-
-const interBoldFontP = fetch(
-  new URL('../../public/fonts/Inter-SemiBold.ttf', import.meta.url)
+const jostPromise = fetch(
+  new URL('@fontsource/jost/files/jost-latin-400-normal.woff', import.meta.url)
 ).then((res) => res.arrayBuffer())
 
 export const config = {
@@ -38,9 +40,9 @@ export default async function OGImage(req: NextRequest) {
   const pageInfo: NotionPageInfo = await pageInfoRes.json()
   console.log(pageInfo)
 
-  const [interRegularFont, interBoldFont] = await Promise.all([
-    interRegularFontP,
-    interBoldFontP
+  const [interVariable, jostVariable] = await Promise.all([
+    interPromise,
+    jostPromise
   ])
 
   return new ImageResponse(
@@ -52,7 +54,7 @@ export default async function OGImage(req: NextRequest) {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#1F2027',
+          backgroundColor: '#002355',
           alignItems: 'center',
           justifyContent: 'center',
           fontFamily: '"Inter", sans-serif',
@@ -60,6 +62,7 @@ export default async function OGImage(req: NextRequest) {
         }}
       >
         {pageInfo.image && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={pageInfo.image}
             style={{
@@ -91,7 +94,7 @@ export default async function OGImage(req: NextRequest) {
             height: 465,
             display: 'flex',
             flexDirection: 'column',
-            border: '16px solid rgba(0,0,0,0.3)',
+            border: `8px solid rgba(247,247,247,${pageInfo.image ? 0.3 : 0.7})`,
             borderRadius: 8,
             zIndex: '1'
           }}
@@ -103,25 +106,48 @@ export default async function OGImage(req: NextRequest) {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-around',
-              backgroundColor: '#fff',
+              backgroundColor: `rgba(247,247,247,${pageInfo.image ? 0.7 : 1})`,
               padding: 24,
               alignItems: 'center',
               textAlign: 'center'
             }}
           >
-            {pageInfo.detail && (
+            {!pageInfo.icon && pageInfo.detail && (
               <div style={{ fontSize: 32, opacity: 0 }}>{pageInfo.detail}</div>
             )}
 
             <div
               style={{
                 fontSize: 70,
-                fontWeight: 700,
-                fontFamily: 'Inter'
+                fontWeight: 400,
+                fontFamily: 'Jost'
               }}
             >
               {pageInfo.title}
             </div>
+
+            {pageInfo.icon && (
+              <div
+                style={{
+                  height: 120,
+                  width: 120,
+                  display: 'flex',
+                  borderRadius: '50%',
+                  zIndex: '5'
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={pageInfo.icon}
+                  style={{
+                    borderRadius: '50%',
+                    width: '100%',
+                    height: '100%'
+                    // transform: 'scale(1.04)'
+                  }}
+                />
+              </div>
+            )}
 
             {pageInfo.detail && (
               <div style={{ fontSize: 32, opacity: 0.6 }}>
@@ -145,9 +171,11 @@ export default async function OGImage(req: NextRequest) {
               zIndex: '5'
             }}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={pageInfo.authorImage}
               style={{
+                borderRadius: '50%',
                 width: '100%',
                 height: '100%'
                 // transform: 'scale(1.04)'
@@ -162,16 +190,16 @@ export default async function OGImage(req: NextRequest) {
       height: 630,
       fonts: [
         {
-          name: 'Inter',
-          data: interRegularFont,
+          name: 'Jost',
+          data: jostVariable,
           style: 'normal',
           weight: 400
         },
         {
           name: 'Inter',
-          data: interBoldFont,
+          data: interVariable,
           style: 'normal',
-          weight: 700
+          weight: 400
         }
       ]
     }

@@ -13,7 +13,7 @@ export const PageHead: React.FC<
     url?: string
   }
 > = ({ site, title, description, pageId, image, url }) => {
-  const rssFeedUrl = `${config.host}/feed`
+  // const rssFeedUrl = `${config.host}/feed`
 
   title = title ?? site?.name
   description = description ?? site?.description
@@ -30,6 +30,7 @@ export const PageHead: React.FC<
       />
 
       <meta name='robots' content='index,follow' />
+      <meta name='theme-color' content='#f7f7f7' />
       <meta property='og:type' content='website' />
 
       {site && (
@@ -69,12 +70,12 @@ export const PageHead: React.FC<
         </>
       )}
 
-      <link
+      {/* <link
         rel='alternate'
         type='application/rss+xml'
         href={rssFeedUrl}
         title={site?.name}
-      />
+      /> */}
 
       <meta property='og:title' content={title} />
       <meta name='twitter:title' content={title} />

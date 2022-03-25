@@ -8,7 +8,7 @@ import cs from 'classnames'
 import { PageBlock } from 'notion-types'
 import { formatDate, getBlockTitle, getPageProperty } from 'notion-utils'
 import BodyClassName from 'react-body-classname'
-import { NotionRenderer } from 'react-notion-x'
+import { NotionComponents, NotionRenderer } from 'react-notion-x'
 import TweetEmbed from 'react-tweet-embed'
 import { useSearchParam } from 'react-use'
 
@@ -20,59 +20,18 @@ import { searchNotion } from '@/lib/search-notion'
 import { useDarkMode } from '@/lib/use-dark-mode'
 
 import { Footer } from './Footer'
-import { GitHubShareButton } from './GitHubShareButton'
 import { Loading } from './Loading'
-import { NotionPageHeader } from './NotionPageHeader'
 import { Page404 } from './Page404'
-import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
+import { BlogPostFooter } from './s-thom/BlogPostFooter'
+import { Header } from './s-thom/Header'
 import styles from './styles.module.css'
-import { Comments } from './s-thom/Comments'
 
 // -----------------------------------------------------------------------------
 // dynamic imports for optional components
 // -----------------------------------------------------------------------------
 
-const Code = dynamic(() =>
-  import('react-notion-x/build/third-party/code').then(async (m) => {
-    // add / remove any prism syntaxes here
-    await Promise.all([
-      import('prismjs/components/prism-markup-templating.js'),
-      import('prismjs/components/prism-markup.js'),
-      import('prismjs/components/prism-bash.js'),
-      import('prismjs/components/prism-c.js'),
-      import('prismjs/components/prism-cpp.js'),
-      import('prismjs/components/prism-csharp.js'),
-      import('prismjs/components/prism-docker.js'),
-      import('prismjs/components/prism-java.js'),
-      import('prismjs/components/prism-js-templates.js'),
-      import('prismjs/components/prism-coffeescript.js'),
-      import('prismjs/components/prism-diff.js'),
-      import('prismjs/components/prism-git.js'),
-      import('prismjs/components/prism-go.js'),
-      import('prismjs/components/prism-graphql.js'),
-      import('prismjs/components/prism-handlebars.js'),
-      import('prismjs/components/prism-less.js'),
-      import('prismjs/components/prism-makefile.js'),
-      import('prismjs/components/prism-markdown.js'),
-      import('prismjs/components/prism-objectivec.js'),
-      import('prismjs/components/prism-ocaml.js'),
-      import('prismjs/components/prism-python.js'),
-      import('prismjs/components/prism-reason.js'),
-      import('prismjs/components/prism-rust.js'),
-      import('prismjs/components/prism-sass.js'),
-      import('prismjs/components/prism-scss.js'),
-      import('prismjs/components/prism-solidity.js'),
-      import('prismjs/components/prism-sql.js'),
-      import('prismjs/components/prism-stylus.js'),
-      import('prismjs/components/prism-swift.js'),
-      import('prismjs/components/prism-wasm.js'),
-      import('prismjs/components/prism-yaml.js')
-    ])
-    return m.Code
-  })
-)
-
+const Code = dynamic(() => import('./s-thom/Code').then((m) => m.Code))
 const Collection = dynamic(() =>
   import('react-notion-x/build/third-party/collection').then(
     (m) => m.Collection
@@ -143,16 +102,23 @@ const propertyTextValue = (
   return defaultFn()
 }
 
-export const NotionPage: React.FC<types.PageProps> = ({
+export interface NotionPageProps extends types.PageProps {
+  components: Partial<NotionComponents>
+}
+
+export const NotionPage: React.FC<NotionPageProps> = ({
   site,
   recordMap,
   error,
+  components: componentsProp = {},
   pageId
 }) => {
   const router = useRouter()
   const lite = useSearchParam('lite')
 
-  const components = React.useMemo(
+  const components = React.useMemo<
+    React.ComponentProps<typeof NotionRenderer>['components']
+  >(
     () => ({
       nextImage: Image,
       nextLink: Link,
@@ -162,12 +128,13 @@ export const NotionPage: React.FC<types.PageProps> = ({
       Pdf,
       Modal,
       Tweet,
-      Header: NotionPageHeader,
+      Header: Header,
       propertyLastEditedTimeValue,
       propertyTextValue,
-      propertyDateValue
+      propertyDateValue,
+      ...componentsProp
     }),
-    []
+    [componentsProp]
   )
 
   // lite mode is for oembed
@@ -188,27 +155,39 @@ export const NotionPage: React.FC<types.PageProps> = ({
 
   // const isRootPage =
   //   parsePageId(block?.id) === parsePageId(site?.rootNotionPageId)
-  const isBlogPost =
+  const isInCollection =
     block?.type === 'page' && block?.parent_table === 'collection'
+
+  // Little bit of mess to get blog features showing in most places I want them in development
+  const isInBlogCollection =
+    isInCollection &&
+    block?.parent_id === '58f2258b-01bd-434b-b116-a14c07cb8740'
+  const isBlogPost = isInBlogCollection || (isInCollection && config.isDev)
 
   const showTableOfContents = !!isBlogPost
   const minTableOfContentsItems = 3
 
-  const pageAside = React.useMemo(
-    () => (
-      <PageAside block={block} recordMap={recordMap} isBlogPost={isBlogPost} />
-    ),
-    [block, recordMap, isBlogPost]
+  const pageAside = null
+
+  const editedDate = React.useMemo(
+    () =>
+      block
+        ? new Date(block.last_edited_time).getFullYear().toString(10)
+        : undefined,
+    [block]
   )
 
   const footer = React.useMemo(
     () => (
       <>
-        {isBlogPost && <Comments />}
-        <Footer />
+        {isBlogPost && !isInBlogCollection && (
+          <p>Note: footer is shown due to dev mode</p>
+        )}
+        {isBlogPost && <BlogPostFooter block={block} />}
+        <Footer year={editedDate} />
       </>
     ),
-    [isBlogPost]
+    [block, editedDate, isBlogPost, isInBlogCollection]
   )
 
   if (router.isFallback) {
@@ -237,8 +216,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
     g.block = block
   }
 
-  const canonicalPageUrl =
-    !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
+  const canonicalPageUrl = getCanonicalPageUrl(site, recordMap)(pageId)
 
   const socialImage = mapImageUrl(
     getPageProperty<string>('Social Image', block, recordMap) ||
@@ -277,6 +255,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
         rootDomain={site.domain}
         fullPage={!isLiteMode}
         previewImages={!!recordMap.preview_images}
+        pageCover={<></>}
         showCollectionViewDropdown={false}
         showTableOfContents={showTableOfContents}
         minTableOfContentsItems={minTableOfContentsItems}
@@ -290,7 +269,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
         footer={footer}
       />
 
-      <GitHubShareButton />
+      {/* <GitHubShareButton /> */}
     </>
   )
 }

@@ -13,6 +13,7 @@ import {
 import * as libConfig from '@/lib/config'
 import { mapImageUrl } from '@/lib/map-image-url'
 import { notion } from '@/lib/notion-api'
+import { mapBaseUrl } from '@/lib/s-thom/mapBaseUrl'
 import { NotionPageInfo } from '@/lib/types'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -65,14 +66,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const imageFallbackUrl = mapImageUrl(libConfig.defaultPageCover, block)
 
   const blockIcon = getBlockIcon(block, recordMap)
-  const authorImageBlockUrl = mapImageUrl(
+  const iconBlockUrl = mapImageUrl(
     blockIcon && isUrl(blockIcon) ? blockIcon : null,
     block
   )
+
   const authorImageFallbackUrl = mapImageUrl(libConfig.defaultPageIcon, block)
-  const [authorImage, image] = await Promise.all([
-    getCompatibleImageUrl(authorImageBlockUrl, authorImageFallbackUrl),
-    getCompatibleImageUrl(imageBlockUrl, imageFallbackUrl)
+  const [authorImage, image, icon] = await Promise.all([
+    getCompatibleImageUrl(
+      authorImageFallbackUrl,
+      mapBaseUrl('/icons/android-icon-192x192.png')
+    ),
+    getCompatibleImageUrl(imageBlockUrl, imageFallbackUrl),
+    getCompatibleImageUrl(iconBlockUrl, null)
   ])
 
   const author =
@@ -107,6 +113,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     title,
     image,
     imageObjectPosition,
+    icon,
     author,
     authorImage,
     detail
@@ -128,6 +135,7 @@ async function isUrlReachable(url: string | null): Promise<boolean> {
     await got.head(url)
     return true
   } catch (err) {
+    console.warn({ noteReach: url })
     return false
   }
 }

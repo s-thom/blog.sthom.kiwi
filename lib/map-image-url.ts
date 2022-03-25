@@ -7,7 +7,8 @@ function isProbablySigned(url: string): boolean {
     const u = new URL(url)
 
     if (
-      u.pathname.startsWith('/secure.notion-static.com') &&
+      (u.pathname.startsWith('/secure.notion-static.com') ||
+        u.hostname.startsWith('prod-files-secure.s3.')) &&
       u.hostname.endsWith('.amazonaws.com')
     ) {
       return true

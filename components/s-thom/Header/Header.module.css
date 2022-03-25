@@ -1,0 +1,106 @@
+.Header {
+  color: #fff;
+  position: relative;
+  text-align: center;
+}
+
+/* Remember to update styles in HomeContent */
+
+.profile {
+  color: #fff;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0.5em;
+  gap: 0.5em;
+}
+
+.profile:focus,
+.profile:focus-within {
+  background-color: #00000080;
+  box-shadow: 0px 0px 1rem #00000080;
+}
+
+@media (min-width: 768px) {
+  .profile {
+    margin-bottom: 1em;
+  }
+}
+
+.nameWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hasImage .nameWrapper {
+  filter: drop-shadow(0 0 0.2em black);
+}
+
+.name {
+  font-weight: 300;
+  font-size: 3rem;
+  font-size: clamp(1.8rem, 10vw, 3rem);
+}
+
+.tag {
+  font-size: 1rem;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .tag {
+    display: block;
+  }
+}
+
+.img {
+  border-radius: 50%;
+}
+
+.imgWrapper {
+  width: 48px;
+}
+
+.hasImage .imgWrapper {
+  box-shadow: 0 8px 40px 0 rgb(0 0 0 / 21%);
+  border-radius: 50%;
+}
+
+@media (min-width: 768px) {
+  .imgWrapper {
+    width: 96px;
+  }
+}
+
+.waves {
+  position: absolute;
+  z-index: 0;
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden;
+  bottom: -200px;
+}
+
+.waves svg {
+  margin: auto;
+  display: block;
+  z-index: 1;
+  position: relative;
+  width: 100%;
+  min-width: 1920px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.hasImage .waves svg {
+  /* Hide the edges of the gaussian blur */
+  transform: translateX(-50%) scale(1.005);
+}
+
+.waves svg image {
+  filter: brightness(0.9) blur(2.5px);
+}

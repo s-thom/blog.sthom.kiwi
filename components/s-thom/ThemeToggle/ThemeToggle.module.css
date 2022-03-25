@@ -1,0 +1,33 @@
+.button {
+  color: #f7f7f7;
+  background-color: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  border: none;
+  padding: 0;
+}
+
+/* Disable button when Java script is not running */
+:global(body:not([data-sthom-theme])) .button {
+  display: none;
+  pointer-events: none;
+}
+
+.g {
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+:global(body:not([data-sthom-theme='light']):not([data-sthom-theme='dark']):not([data-sthom-theme='unreadable']):not([data-sthom-theme='rainbow']))
+  .g.sunmoon,
+:global(body[data-sthom-theme='light']) .g.sun,
+:global(body[data-sthom-theme='dark']) .g.moon,
+:global(body[data-sthom-theme='unreadable']) .g.binary,
+:global(body[data-sthom-theme='rainbow']) .g.heart {
+  opacity: 1;
+}

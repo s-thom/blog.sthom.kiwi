@@ -7,6 +7,8 @@
  * places to add some flare.
  */
 
+/* Some modifications made towards the bottom */
+
 .notion {
   --notion-max-width: 720px;
   --notion-header-height: 54px;
@@ -343,7 +345,7 @@
 }
 
 /* if you don't want rounded page icon images, remove this */
-.notion-page-icon-hero.notion-page-icon-image {
+.notion-page-icon-hero.notion-page-icon-image img.notion-page-icon {
   border-radius: 50%;
   box-shadow: 0 8px 40px 0 rgb(0 0 0 / 21%);
 }

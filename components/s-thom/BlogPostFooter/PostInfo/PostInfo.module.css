@@ -1,0 +1,50 @@
+.wrapper {
+  width: 100%;
+  padding: 8px;
+  max-width: calc(var(--notion-max-width) + 32px);
+}
+
+.details {
+  width: 100%;
+  padding: 8px;
+  color: #666666;
+  border-radius: 1em;
+  flex-direction: column;
+}
+
+.authorSection {
+  display: grid;
+  grid-template-columns: 1fr repeat(2, auto) 1fr;
+  justify-items: center;
+  width: 100%;
+  align-items: center;
+  column-gap: 16px;
+}
+
+.img {
+  border-radius: 50%;
+}
+.imgWrapper {
+  grid-column-start: 2;
+  width: 48px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.writtenBy {
+  font-size: 0.8em;
+}
+
+.name {
+  color: var(--fg-color);
+}
+
+.backLink {
+  text-align: center;
+  font-size: 0.8em;
+  margin-left: auto;
+}

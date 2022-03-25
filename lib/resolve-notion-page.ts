@@ -6,6 +6,7 @@ import { environment, pageUrlAdditions, pageUrlOverrides, site } from './config'
 import { db } from './db'
 import { getSiteMap } from './get-site-map'
 import { getPage } from './notion'
+import { mutateRecordMap } from './s-thom/mutateRecordMap'
 
 export async function resolveNotionPage(domain: string, rawPageId?: string) {
   let pageId: string
@@ -85,6 +86,9 @@ export async function resolveNotionPage(domain: string, rawPageId?: string) {
     console.log(site)
     recordMap = await getPage(pageId)
   }
+
+  // Customisation: modify the RecordMap
+  await mutateRecordMap(recordMap)
 
   const props = { site, recordMap, pageId }
   return { ...props, ...(await acl.pageAcl(props)) }

@@ -4,6 +4,11 @@ import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 
 import * as Fathom from 'fathom-client'
+import '@fontsource/inter'
+import '@fontsource/inter/variable.css'
+import '@fontsource/jetbrains-mono'
+import '@fontsource/jost'
+import '@fontsource/jost/variable.css'
 // used for rendering equations (optional)
 import 'katex/dist/katex.min.css'
 import posthog from 'posthog-js'
@@ -18,6 +23,7 @@ import 'styles/global.css'
 import 'styles/notion.css'
 // global style overrides for prism theme (optional)
 import 'styles/prism-theme.css'
+import 'styles/sthom.scss'
 
 import { bootstrap } from '@/lib/bootstrap-client'
 import {
@@ -27,6 +33,9 @@ import {
   posthogConfig,
   posthogId
 } from '@/lib/config'
+
+// Extra styles for Shiki
+import '../lib/s-thom/shiki/shiki.css'
 
 if (!isServer) {
   bootstrap()

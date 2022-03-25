@@ -6,6 +6,7 @@ import * as types from './types'
 import { includeNotionIdInUrls } from './config'
 import { getCanonicalPageId } from './get-canonical-page-id'
 import { notion } from './notion-api'
+import { getPageFullUrl } from './s-thom/getPageFullUrl'
 
 const uuid = !!includeNotionIdInUrls
 
@@ -40,6 +41,7 @@ async function getAllPagesImpl(
     getPage
   )
 
+  const fullUrlMap: Record<string, string> = {}
   const canonicalPageMap = Object.keys(pageMap).reduce(
     (map, pageId: string) => {
       const recordMap = pageMap[pageId]
@@ -62,6 +64,7 @@ async function getAllPagesImpl(
 
         return map
       } else {
+        fullUrlMap[pageId] = getPageFullUrl(config.site, recordMap, pageId)
         return {
           ...map,
           [canonicalPageId]: pageId
@@ -73,6 +76,7 @@ async function getAllPagesImpl(
 
   return {
     pageMap,
-    canonicalPageMap
+    canonicalPageMap,
+    fullUrlMap
   }
 }
