@@ -1,0 +1,17 @@
+.wrapper {
+  width: 100%;
+  padding: 8px;
+  max-width: calc(var(--notion-max-width) + 32px);
+}
+
+.details {
+  width: 100%;
+  padding: 8px;
+  color: #717171;
+  border-radius: 1em;
+}
+
+.giscus {
+  width: 100%;
+  padding: 8px;
+}
